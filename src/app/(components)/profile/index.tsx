@@ -6,7 +6,7 @@ import useAppStore from "@/store/app";
 import { Image } from "@heroui/react";
 import gsap from "gsap";
 import { ExternalLink, X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 const ANIMATION_DURATION = 1;
 const STAGGER_DELAY = 0.1;
@@ -25,25 +25,19 @@ export default function DetailProfile() {
     const infoRefs = useRef<(HTMLDivElement | null)[]>([]);
     const timeline = gsap.timeline();
 
-    useEffect(() => {
-        if (profileModal) {
-            animateScreen();
-        }
-    }, [profileModal]);
-
-    const animateScreen = () => {
+    const animateScreen = useCallback(() => {
         timeline.to(leftScreenRef.current, {
             width: "50vw",
             duration: ANIMATION_DURATION,
             ease: "power3.out",
         }, 0);
-
+    
         timeline.to(rightScreenRef.current, {
             width: "50vw",
             duration: ANIMATION_DURATION,
             ease: "power3.out",
         }, 0);
-
+    
         timeline.fromTo(imageRef.current, {
             display: "none",
             opacity: INITIAL_OPACITY,
@@ -54,7 +48,7 @@ export default function DetailProfile() {
             y: FINAL_Y,
             duration: ANIMATION_DURATION,
         });
-
+    
         timeline.fromTo(nameRef.current, {
             opacity: INITIAL_OPACITY,
             y: INITIAL_Y,
@@ -63,7 +57,7 @@ export default function DetailProfile() {
             y: FINAL_Y,
             duration: 0.5,
         }, "-=0.5");
-
+    
         timeline.fromTo(headlineRef.current, {
             opacity: INITIAL_OPACITY,
             y: INITIAL_Y,
@@ -71,9 +65,9 @@ export default function DetailProfile() {
             opacity: FINAL_OPACITY,
             y: FINAL_Y,
             duration: 0.5,
-            delay: STAGGER_DELAY, // Slight delay for the headline
+            delay: STAGGER_DELAY, 
         }, "-=0.5");
-
+    
         infoRefs.current.forEach((ref, index) => {
             if (ref) {
                 timeline.fromTo(ref, {
@@ -83,11 +77,17 @@ export default function DetailProfile() {
                     opacity: FINAL_OPACITY,
                     y: FINAL_Y,
                     duration: 0.5,
-                    delay: index * STAGGER_DELAY // Stagger the animations
+                    delay: index * STAGGER_DELAY 
                 }, "-=0.5");
             }
         });
-    };
+    }, [timeline, leftScreenRef, rightScreenRef, imageRef, nameRef, headlineRef, infoRefs]);
+    
+    useEffect(() => {
+        if (profileModal) {
+            animateScreen();
+        }
+    }, [profileModal, animateScreen]);
 
     const closeScreen = () => {
         timeline.reverse().then(() => {
@@ -99,7 +99,7 @@ export default function DetailProfile() {
         <div className={`fixed min-h-screen flex flex-col items-center justify-center w-screen z-50 ${profileModal ? '' : 'hidden'}`}>
             <div className="relative font-mont z-10 flex flex-col items-center w-full max-w-[300px]">
                 <div ref={imageRef} className="mb-10">
-                    <Image src={PROFILE_DATA.avatarSrc} className="rounded-full" width={250} height={250} />
+                    <Image src={PROFILE_DATA.avatarSrc} alt="Vladyslav" className="rounded-full" width={250} height={250} />
                 </div>
                 <H5 ref={nameRef}>{PROFILE_DATA.name}</H5>
                 <div ref={headlineRef} className="font-mont text-gray flex gap-2 mb-5">
