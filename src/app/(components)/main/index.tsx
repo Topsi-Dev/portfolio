@@ -50,7 +50,7 @@ export default function Main() {
           <PersonalInfo />
           <div className="relative flex flex-col items-center bg-card rounded-xl items-center justify-end relative h-[280px] w-full cursor-pointer md:flex-1">
             <div ref={imageRef} className="relative w-full h-full flex flex-col items-center">
-              <Image src={'/assets/images/me.png'} alt="Vladyslav" width={240} height={380} className="absolute bottom-0 z-10" />
+              <Image src={'/assets/images/me.png'} alt="Vladyslav" width={480} height={760} className="absolute bottom-0 z-10" />
             </div>
           </div>
           <ExperienceAndSkills />
